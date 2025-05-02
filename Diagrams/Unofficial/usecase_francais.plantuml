@@ -72,14 +72,12 @@ depositFiat ..> fiatAuthConf  : <<include>>
 
    package Notifications {
 
-        usecase "Envoyer Alerte" as sendAlert #line:Red
         usecase "Vérifier Historique Alertes" as notif_history
         usecase "Créer Alerte de Prix" as createAlert
         usecase "Modifier Alerte" as modifyAlert
         usecase "Supprimer Alerte" as deleteAlert
 
 
-         createAlert <.. sendAlert #line:Red : <<include>>
 
     }
 

@@ -1,0 +1,28 @@
+@startuml StateDiagramOrdre
+
+title Diagramme d'États pour la Classe Ordre
+
+state Ouvert
+state PartiellementExécuté as "Partiellement Exécuté"
+state Exécuté
+state Annulé
+state Rejeté
+
+[*] --> Ouvert : créerOrdre() / vérifier() [Valide]
+[*] --> Rejeté : créerOrdre() / vérifier() [Invalide]
+
+Ouvert --> PartiellementExécuté : traiter() / apparierOrdres() [Match Partiel]
+Ouvert --> Exécuté : traiter() / apparierOrdres() [Match Complet]
+Ouvert --> Annulé : annuler()
+
+PartiellementExécuté --> Exécuté : traiter() / apparierOrdres() [Match du Reste]
+PartiellementExécuté --> Annulé : annuler()
+
+Rejeté --> [*]
+Annulé --> [*]
+Exécuté --> [*]
+
+note right of Ouvert : Un ordre peut être modifié\ntant qu'il est Ouvert\nou Partiellement Exécuté\n(modifier())
+note right of PartiellementExécuté : L'action 'modifier()' peut affecter\nles conditions mais ne change pas\nnécessairement l'état principal ici.
+
+@enduml
