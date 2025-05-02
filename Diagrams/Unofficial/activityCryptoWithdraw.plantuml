@@ -1,0 +1,51 @@
+@startuml ActiviteRetraitCrypto
+
+title Activité de Retrait Crypto
+
+|Trader|
+start
+:Initier le Retrait Crypto;
+:Saisir les Détails du Retrait (Adresse, Montant);
+:Confirmer la Demande de Retrait;
+
+|Plateforme de Trading|
+:Recevoir la Demande de Retrait;
+:Valider les Détails du Retrait ; 
+if (Validation Réussie ?) then ([non])
+    :Notifier le Trader de l'Erreur de Validation;
+        |Trader|
+        :Recevoir la Notification d'Erreur de Validation;
+        stop
+else ([oui])
+    |Plateforme de Trading|    
+   :Initier la Transaction Blockchain;
+    |Réseau Blockchain|
+    :Recevoir la Requête de Transaction;
+    :Valider la Transaction;
+    if (Transaction Valide ?) then ([Oui])
+      :Miner/Confirmer la Transaction;
+    else ([Non])
+      :Rejeter la Transaction;
+    endif
+    |Plateforme de Trading|
+    :Recevoir le Statut de la Transaction depuis la Blockchain;
+      if (Transaction Confirmée ?) then ([Oui])
+        |Plateforme de Trading|
+        :Débiter le Solde du Compte Trader;
+        |Plateforme de Trading|
+        :Mettre à Jour l'Historique des Transactions;
+        |Plateforme de Trading|
+        :Notifier le Trader du Succès;
+        |Trader|
+        :Recevoir la Confirmation de Retrait;
+        stop
+      else ([Non])
+        :Enregistrer l'Échec de la Transaction;
+        :Notifier le Trader de l'Échec;
+          |Trader|
+          :Recevoir la Notification d'Échec de Retrait;
+        stop
+      endif 
+endif
+
+@enduml
