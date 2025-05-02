@@ -1,0 +1,40 @@
+@startuml sequence
+skinparam style strictuml
+actor User
+participant TradingPlatform
+participant PaymentGateway
+participant OrderBook
+
+User -> TradingPlatform: Request Buy Crypto (e.g., BTC with USD)
+activate TradingPlatform
+
+User -> TradingPlatform: Specify Amount & Order Type (Market/Limit)
+
+TradingPlatform -> TradingPlatform: Check User Fiat Balance (USD)
+
+alt Sufficient Fiat Balance
+
+    TradingPlatform -> OrderBook: Submit Buy Order
+    activate OrderBook
+    OrderBook --> TradingPlatform: Order Filled Confirmation
+    deactivate OrderBook
+    TradingPlatform -> TradingPlatform: Debit User Fiat Balance (USD)
+    TradingPlatform -> TradingPlatform: Credit User Crypto Balance (BTC)
+    TradingPlatform --> User: Buy Order Successful
+
+else Insufficient Fiat Balance
+
+    TradingPlatform --> User: Notify Insufficient Funds
+    User -> TradingPlatform: Initiate Fiat Deposit Request
+    TradingPlatform -> PaymentGateway: Process Deposit(Amount, UserID)
+    activate PaymentGateway
+    PaymentGateway --> TradingPlatform: Deposit Success Confirmation
+    deactivate PaymentGateway
+    TradingPlatform -> TradingPlatform: Update User Fiat Balance (USD)
+    TradingPlatform --> User: Deposit Confirmed, Can Proceed with Buy
+
+end
+
+deactivate TradingPlatform
+
+@enduml

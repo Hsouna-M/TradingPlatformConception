@@ -1,0 +1,27 @@
+@startuml TradingPlatform_Admin_UseCases
+left to right direction
+
+actor "Admin" as a
+
+rectangle "Trading Platform System" {
+
+    package "Administration" {
+        usecase "Block User" as user_block
+        usecase "Add Coin" as addCoin
+        usecase "Delete Coin" as deleteCoin
+        usecase "Handle Support Issues" as handleSupport
+    }
+
+    package "Account Management (Admin Tasks)" {
+         usecase "Verify User Identity (KYC)" as verify_identity
+    }
+
+}
+
+a -- user_block
+a -- addCoin
+a -- deleteCoin
+a -- handleSupport
+a -- verify_identity
+
+@enduml

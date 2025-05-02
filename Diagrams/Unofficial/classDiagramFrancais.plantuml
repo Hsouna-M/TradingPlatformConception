@@ -1,0 +1,163 @@
+@startuml PlateformeDeTrading
+
+class Utilisateur {
+  +int id
+  +String nomUtilisateur
+  +String email
+  +String motDePasse
+  +Boolean estVérifié
+  +seConnecter()
+  +seDéconnecter()
+  +mettreAJourProfil()
+}
+
+class Trader {
+  +créerOrdre()
+  +modifierOrdre()
+  +annulerOrdre() 
+  +modifierAlerte() 
+  +créerAlerte()
+  +demanderSupport()
+  +déposer()
+  +retirer()
+}
+
+class Administrateur {
+  +ajouterMarché()
+  +supprimerMarché()
+  +gérerTicketsSupport()
+  +vérifierIdentitéUtilisateur()
+  +bloquerUtilisateur()
+}
+
+class Ordre {
+  +int id
+  +int idUtilisateur 
+  +String paireMarché
+  +String type
+  +String statut
+  +double montant
+  +double prix
+  +Date dateCreation
+  +Date exécutéLe
+  +traiter()
+  +vérifier()
+  +annuler()
+  +modifier()
+}
+
+
+class carnetDordres {
+  +apparierOrdres()
+}
+
+class Marché {
+  +String paire
+  +double prixActuel
+  +double volume24h
+  +obtenirDonnéesMarché()
+  +mettreAJourPrix()
+}
+
+class Graphique {
+  +String paireMarché
+  +Période période
+  +récupérerDonnées()
+  +afficherGraphique()
+}
+
+
+class Portefeuille {
+  +int id
+  +int idUtilisateur
+  +Map<String, Double> devises  
+  +obtenirSolde()
+  +mettreAJourSolde()
+}
+
+class Transaction {
+  +int id
+  +int idPortefeuille
+  +String type
+  +double montant
+  +String devise
+  +StatutTransaction statut
+  +Date dateCreation
+  +traiter()
+  +vérifier()
+}
+
+
+class Alerte {
+  +int id
+  +int idTrader
+  +String paireMarché
+  +double prixCible
+  +boolean estActive
+  +Date dateCreation
+  +Date déclenchéeLe
+  +vérifierCondition()
+  +déclencher()
+  +désactiver()
+}
+
+
+class RéseauBlockchain {
+  +String nom
+  +traiterTransactionCrypto()
+  +vérifierTransaction()
+}
+
+class PasserelleDePaiement {
+  +String nom
+  +traiterTransactionFiat()
+  +vérifierPaiementFiat()
+}
+
+class APITradingView {
+  +récupérerDonnéesMarché()
+  +récupérerDonnéesHistoriques()
+}
+
+class TicketDeSupport {
+  +int id
+  +int idUtilisateur
+  +String sujet
+  +String description
+  +boolean statut
+  +Date dateCreation
+  +Date résoluLe
+  +créerRéponse()
+  +fermerTicket()
+}
+
+
+
+Utilisateur <|-- Trader
+Utilisateur <|-- Administrateur
+Trader"1..1" <.. "1..*"Administrateur 
+Utilisateur"1..1" <.. "1..*"Administrateur 
+
+Trader "1..*" -- "1..*" Ordre : passer
+carnetDordres "1..*" *-- "1..1" Ordre : appartient
+Trader "1..*" -- "0..*" Alerte : créer
+Trader "1" -- "1" Portefeuille : possède
+Trader "1..*" -- "0..*" TicketDeSupport : créer
+
+Administrateur "1..*" -- "1..*" TicketDeSupport : traiter
+
+Ordre "*" ..> "1" Marché  
+Ordre "1" ..> "1" Portefeuille 
+Marché "1" -- "1..*" Graphique : afficher  
+Marché "1" -- "1" carnetDordres : possède 
+
+Portefeuille "1" -- "0..*" Transaction : enregistre
+
+Alerte "*" ..> "1" Marché 
+
+Transaction"1..1" ..> "1..*"RéseauBlockchain 
+Transaction"1..1" ..> "1..*"PasserelleDePaiement 
+
+Graphique"1" ..> "1"APITradingView 
+
+@enduml

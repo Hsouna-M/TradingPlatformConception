@@ -1,0 +1,28 @@
+@startuml TradingPlatform_Global_UseCase
+left to right direction
+
+actor "Trader" as t
+actor "Admin" as a
+actor "Blockchain Network" as bn <<External System>>
+actor "Payment Gateway" as pg <<External System>>
+
+rectangle "Trading Platform System" {
+  usecase "Manage Account" as UC_Account
+  usecase "Manage Funds" as UC_Funds
+  usecase "Perform Trading" as UC_Trading
+  usecase "Manage Alerts" as UC_Alerts
+  usecase "Administer Platform" as UC_Admin
+}
+
+t -- UC_Account
+t -- UC_Funds
+t -- UC_Trading
+t -- UC_Alerts
+
+a -- UC_Admin
+a -- UC_Account
+
+UC_Funds --> bn : (Crypto Transfers)
+UC_Funds --> pg : (Fiat Transfers)
+
+@enduml

@@ -1,0 +1,22 @@
+what are the possible calsses in a trading system 
+ 
+trader : 
+
+admin : 
+
+wallet : 
+
+order : 
+
+coin : 
+
+order book : 
+
+notification :
+
+
+the actor interacts with the system to do something 
+    the payment gateway will interact with the system to process card payments and transaction 
+
+
+

@@ -1,0 +1,41 @@
+@startuml
+left to right direction
+skinparam backgroundColor #EEE
+skinparam usecase {
+  BorderColor black
+  BackgroundColor white
+}
+skinparam actor {
+  BorderColor black
+  BackgroundColor lightblue
+}
+
+actor Customer
+actor Cashier
+actor "Payment Gateway" as PaymentGateway
+
+rectangle "Grocery Store System" {
+  usecase "Browse Products" as BrowseProducts
+  usecase "Select Products" as SelectProducts
+  usecase "Add to Cart" as AddToCart
+  usecase "View Cart" as ViewCart
+  usecase "Checkout" as Checkout
+  usecase "Process Card Payment" as ProcessCardPayment
+  usecase "Generate Receipt" as GenerateReceipt
+}
+
+Customer -- BrowseProducts
+Customer -- SelectProducts
+Customer -- AddToCart
+Customer -- ViewCart
+Customer -- Checkout
+
+Checkout -- (ProcessCardPayment) : <<include>>
+Checkout -- GenerateReceipt : <<include>>
+
+Cashier -- Checkout
+Cashier -- GenerateReceipt
+
+(ProcessCardPayment) -- PaymentGateway
+
+@enduml

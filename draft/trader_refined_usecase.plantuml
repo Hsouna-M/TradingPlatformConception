@@ -1,0 +1,80 @@
+@startuml TradingPlatform_Trader_UseCases
+left to right direction
+
+actor "Trader" as t
+actor "Blockchain Network" as bn <<External System>>
+actor "Payment Gateway" as pg <<External System>>
+
+rectangle "Trading Platform System" {
+
+    package "Account Management" {
+        usecase "Register Account" as register
+        usecase "Login" as login
+    }
+
+    package "Funds Management" {
+        usecase "Deposit" as deposit
+        usecase "Withdraw" as withdraw
+        usecase "Check Wallet Balance" as balanceHistory
+        usecase "Check Transactions History" as transactionHistory
+
+        note right of deposit : Includes Fiat & Crypto
+        note right of withdraw : Includes Fiat & Crypto
+
+        usecase "Process Fiat Deposit" as depositFiat
+        usecase "Process Crypto Deposit" as depositCrypto
+        usecase "Process Fiat Withdraw" as withdrawFiat
+        usecase "Process Crypto Withdraw" as withdrawCrypto
+
+        deposit <|-- depositFiat
+        deposit <|-- depositCrypto
+        withdraw <|-- withdrawFiat
+        withdraw <|-- withdrawCrypto
+    }
+
+    package "Trading" {
+        usecase "Buy Crypto Currency" as buy
+        usecase "Sell Crypto Currency" as sell
+        usecase "Process Order" as processOrder
+        usecase "Cancel Order" as cancelOrder
+        usecase "Search Coins" as search
+        usecase "Chart Visualization" as chart_visual
+        usecase "View Trade History" as hist_trade
+        usecase "Request Client Support" as clientSupport
+
+        buy ..> processOrder : <<include>>
+        sell ..> processOrder : <<include>>
+    }
+
+    package "Notifications" {
+        usecase "Create Alert" as createAlert
+        usecase "Modify Alert" as modifyAlert
+        usecase "Delete Alert" as deleteAlert
+        usecase "Check Alerts History" as notif_history
+    }
+}
+
+t -- register
+t -- login
+t -- deposit
+t -- withdraw
+t -- balanceHistory
+t -- transactionHistory
+t -- buy
+t -- sell
+t -- cancelOrder
+t -- search
+t -- chart_visual
+t -- hist_trade
+t -- clientSupport
+t -- createAlert
+t -- modifyAlert
+t -- deleteAlert
+t -- notif_history
+
+depositFiat --> pg
+withdrawFiat --> pg
+depositCrypto --> bn
+withdrawCrypto --> bn
+
+@enduml

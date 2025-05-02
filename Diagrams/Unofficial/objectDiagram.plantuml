@@ -1,0 +1,77 @@
+@startuml objectDiagram
+
+object Trader
+Trader : id = 123456
+Trader : nomTrader= khaledpqp
+Trader : email= khaledpqp@gmail.com
+Trader : motDePasse= ********
+Trader : estVérifié= true 
+
+object trader 
+trader : id = 123564897 
+trader : nomTrader = mahdyWn
+trader : email = mahdyWn@gmail.com
+trader : motDePasse = ********
+trader : estVérifié = true
+
+object portefeuille
+portefeuille : id=12435689873215564
+portefeuille : idUtilisateur=123456
+portefeuille : devis= {USD= 10000.000 ,BTC= 0.5 ,MXR= 10.3}
+
+object Alerte 
+Alerte : id = 101
+Alerte : id = 123456
+Alerte : paireMarché = BTC/USD
+Alerte : prixCible = 74429
+Alerte : estActive = false
+Alerte : dateCreattion = 05/04/25
+Alerte : exécutéLe = 07/04/25
+
+object Ordre
+Ordre : id = 48965
+Ordre : idUtilisateur= 123456
+Ordre : paireMarche = BTC/USD
+Ordre : type = achat
+Ordre : status = executé
+Ordre : montant = 0.1 BTC
+Ordre : prix = 74440
+Ordre : dateCreattion = 07/04/25
+Ordre : dateExecution = 07/04/25
+
+object ordre
+ordre : id = 56134
+ordre : idUtilisateur= 123564897
+ordre : paireMarche = BTC/USD
+ordre : type = vente
+ordre : status = executé
+ordre : montant = 0.1 BTC
+ordre : prix = 74440
+ordre : dateCreattion = 05/04/25
+ordre : dateExecution = 07/04/25
+
+object Marché
+Marché : paire= BTC/USD
+Marché : prixActuelle= 95133.0
+Marché : volume24h= >41B $
+
+object Graphique
+Graphique : paireMarche = BTC/USD 
+Graphique : periode = 1J
+
+
+object carnetOrdres 
+
+Trader -- portefeuille
+Trader -- Ordre
+Trader -- Alerte
+Marché -- Alerte
+ordre -- Marché
+Ordre -- Marché
+Graphique -- Marché
+carnetOrdres -- Marché
+carnetOrdres *-- ordre
+carnetOrdres *-- Ordre
+trader -- ordre
+
+@enduml

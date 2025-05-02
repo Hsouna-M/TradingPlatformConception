@@ -1,0 +1,138 @@
+@startuml tradingPlatform
+left to right direction
+
+
+actor "Trader" as t
+actor "Admin" as a
+actor "Reseaux BlockChain" as blockchainNetwork
+actor "Payment Gateway" as PaymentGateway
+actor "trading view api" as trading_api
+
+
+
+rectangle "Platforme de Trading" {
+    
+    package Transactions{
+        usecase "Process Crypto Transaction" as miningTransaction          
+        usecase "Process Fiat Transaction" as fiatAuthConf
+        usecase "Process Order" as processOrder        
+        
+    }
+    package Trading{
+        
+        usecase "Cancel Order" as CancelOrder
+        usecase "search Market" as search
+        usecase "chart visualisaion" as chart_visual
+        
+        usecase "choose time frame" as time_frame
+        
+        usecase "view trade history" as hist_trade
+        
+        usecase "export trading history" as export
+
+        usecase "request client support" as clientSupport
+        usecase "buy crypto Currency" as buy  
+        usecase "sell Crypto Currency" as sell 
+        
+        chart_visual <.. time_frame : <<extend>>
+        hist_trade <.. export : <<extend>>
+        
+
+}
+
+buy ..> processOrder : <<include>> 
+sell ..> processOrder : <<include>> 
+
+    package FundsManagment{   
+
+        usecase "Deposit" as deposit 
+        usecase "crypto deposit" as depositCrypto
+        usecase "fiat deposit" as depositFiat
+        usecase "Withdraw" as withdraw 
+        usecase "crypto Withdraw" as withdrawCrypto 
+        usecase "fiat Withdraw" as withdrawFiat 
+      
+        usecase "check Transactions history" as transactionHistory
+        usecase "check Wallet Balance" as balanceHistory       
+        usecase "export transaction history" as transactionHistory_export         
+       
+        withdraw <|-- withdrawFiat
+        withdraw <|-- withdrawCrypto
+        deposit <|-- depositCrypto
+        deposit <|-- depositFiat
+        transactionHistory <.. transactionHistory_export : <<extend>>
+        
+  
+     }
+
+withdrawCrypto ..> miningTransaction  : includes
+depositCrypto ..> miningTransaction : includes
+withdrawFiat ..> fiatAuthConf  : includes
+depositFiat ..> fiatAuthConf  : includes
+
+   package Notifications {
+
+        usecase "send alert" as sendAlert #line:Red
+        usecase "check alerts history" as notif_history
+        usecase "create Price Alert" as createAlert
+        usecase "modify alert" as modifyAlert 
+        usecase "delete alert" as deleteAlert
+                
+
+         createAlert <.. sendAlert #line:Red : includes 
+
+    }
+
+    package AccountManagment{
+
+        usecase "register account" as register 
+        usecase "Login" as login  
+        usecase "verify Login details" as verifyLogin        
+        usecase "Verify Users identity" as verify_identity  
+
+        login ..> verifyLogin : <<includes>>
+        register ..> verify_identity : <<includes>>  
+
+     }
+    package administration{
+        
+        usecase "Manage users" as manage_users
+        usecase "Manage Markets" as manage_markets
+        usecase "Handle Support Issues" as handleSupport 
+     }
+
+
+t --> sell 
+t --> buy 
+t --> chart_visual
+t --> search
+t --> CancelOrder
+t --> hist_trade
+t --> clientSupport
+
+t --> withdraw
+t --> deposit 
+t --> transactionHistory
+t --> balanceHistory 
+
+t --> register
+t --> login
+
+t --> createAlert
+t --> modifyAlert
+t --> notif_history
+t --> deleteAlert
+
+a --> manage_users
+a --> manage_markets
+a --> handleSupport 
+
+a --> verify_identity
+
+chart_visual <-- trading_api
+
+fiatAuthConf <-- PaymentGateway
+miningTransaction <-- blockchainNetwork
+}
+
+@enduml

@@ -1,0 +1,22 @@
+@startuml diag
+title Créer une alerte de prix
+
+actor Trader
+participant "Interface utilisateur" as UI
+participant "Service Alerte" as Service
+participant "Système de Notification" as Notification
+
+Trader -> UI : saisit les informations de l'alerte (prix cible)
+UI -> Service : envoie la demande de création d'alerte
+Service -> Service : enregistre la nouvelle alerte
+
+alt conditions sont remplies
+    Trader -> Trader
+    UI -> UI
+    Service -> Notification : demande d’envoyer une notification
+    Notification -> Service : envoie la notification
+end
+
+Service -> UI : envoyer une confirmation que l’alerte a été créée avec succès
+
+@enduml
