@@ -3,26 +3,24 @@
 title Diagramme d'États pour la Classe Ordre
 
 state Ouvert
+state Verification
 state PartiellementExécuté as "Partiellement Exécuté"
 state Exécuté
 state Annulé
-state Rejeté
+state rejetee 
 
-[*] --> Ouvert : créerOrdre() / vérifier() [Valide]
-[*] --> Rejeté : créerOrdre() / vérifier() [Invalide]
+[*] --> Verification 
+Verification --> Ouvert :  [Valide]
+Verification --> rejetee :  [non valide]
 
-Ouvert --> PartiellementExécuté : traiter() / apparierOrdres() [Match Partiel]
-Ouvert --> Exécuté : traiter() / apparierOrdres() [Match Complet]
-Ouvert --> Annulé : annuler()
+Ouvert --> PartiellementExécuté :   [Match Partiel]
+Ouvert --> Exécuté :   [Match Complet]
+Ouvert --> Annulé : annulation
 
-PartiellementExécuté --> Exécuté : traiter() / apparierOrdres() [Match du Reste]
-PartiellementExécuté --> Annulé : annuler()
+PartiellementExécuté --> Exécuté : [Match du Reste]
 
-Rejeté --> [*]
+rejetee --> [*]
 Annulé --> [*]
 Exécuté --> [*]
-
-note right of Ouvert : Un ordre peut être modifié\ntant qu'il est Ouvert\nou Partiellement Exécuté\n(modifier())
-note right of PartiellementExécuté : L'action 'modifier()' peut affecter\nles conditions mais ne change pas\nnécessairement l'état principal ici.
 
 @enduml
