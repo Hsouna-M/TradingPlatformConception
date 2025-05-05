@@ -1,34 +1,54 @@
 @startuml PlateformeDeTrading
+left to right direction 
 
-class Utilisateur {
-  +int id
-  +String nomUtilisateur
-  +String email
-  +String motDePasse
-  +Boolean estVérifié
-  +seConnecter()
-  +seDéconnecter()
-  +mettreAJourProfil()
+package ultilisateurs&Support{
+
+    class Utilisateur {
+      +int id
+      +String nomUtilisateur
+      +String email
+      +String motDePasse
+      +Boolean estVérifié
+      +seConnecter()
+      +seDéconnecter()
+      +mettreAJourProfil()
+    }
+
+    class TicketDeSupport {
+      +int id
+      +int idUtilisateur
+      +String sujet
+      +String description
+      +boolean statut
+      +Date dateCreation
+      +Date résoluLe
+      +créerRéponse()
+      +fermerTicket()
+    }
+
+    class Trader {
+      +créerOrdre()
+      +modifierOrdre()
+      +annulerOrdre() 
+      +modifierAlerte() 
+      +créerAlerte()
+      +demanderSupport()
+      +déposer()
+      +retirer()
+    }
+
+    class Administrateur {
+      +ajouterMarché()
+      +supprimerMarché()
+      +gérerTicketsSupport()
+      +vérifierIdentitéUtilisateur()
+      +bloquerUtilisateur()
+    }
+
 }
 
-class Trader {
-  +créerOrdre()
-  +modifierOrdre()
-  +annulerOrdre() 
-  +modifierAlerte() 
-  +créerAlerte()
-  +demanderSupport()
-  +déposer()
-  +retirer()
-}
 
-class Administrateur {
-  +ajouterMarché()
-  +supprimerMarché()
-  +gérerTicketsSupport()
-  +vérifierIdentitéUtilisateur()
-  +bloquerUtilisateur()
-}
+package Trading {
 
 class Ordre {
   +int id
@@ -66,28 +86,6 @@ class Graphique {
   +afficherGraphique()
 }
 
-
-class Portefeuille {
-  +int id
-  +int idUtilisateur
-  +Map<String, Double> devises  
-  +obtenirSolde()
-  +mettreAJourSolde()
-}
-
-class Transaction {
-  +int id
-  +int idPortefeuille
-  +String type
-  +double montant
-  +String devise
-  +StatutTransaction statut
-  +Date dateCreation
-  +traiter()
-  +vérifier()
-}
-
-
 class Alerte {
   +int id
   +int idTrader
@@ -101,35 +99,50 @@ class Alerte {
   +désactiver()
 }
 
-
-class RéseauBlockchain {
-  +String nom
-  +traiterTransactionCrypto()
-  +vérifierTransaction()
-}
-
-class PasserelleDePaiement {
-  +String nom
-  +traiterTransactionFiat()
-  +vérifierPaiementFiat()
-}
-
 class APITradingView {
   +récupérerDonnéesMarché()
   +récupérerDonnéesHistoriques()
 }
 
-class TicketDeSupport {
-  +int id
-  +int idUtilisateur
-  +String sujet
-  +String description
-  +boolean statut
-  +Date dateCreation
-  +Date résoluLe
-  +créerRéponse()
-  +fermerTicket()
 }
+
+
+package Transactions {
+    
+    class Portefeuille {
+      +int id
+      +int idUtilisateur
+      +Map<String, Double> devises  
+      +obtenirSolde()
+      +mettreAJourSolde()
+    }
+
+    class Transaction {
+      +int id
+      +int idPortefeuille
+      +String type
+      +double montant
+      +String devise
+      +StatutTransaction statut
+      +Date dateCreation
+      +traiter()
+      +vérifier()
+    }
+
+    class RéseauBlockchain {
+      +String nom
+      +traiterTransactionCrypto()
+      +vérifierTransaction()
+    }
+
+    class PasserelleDePaiement {
+      +String nom
+      +traiterTransactionFiat()
+      +vérifierPaiementFiat()
+    }
+
+} 
+
 
 
 
@@ -155,8 +168,8 @@ Portefeuille "1" -- "0..*" Transaction : enregistre
 
 Alerte "*" ..> "1" Marché 
 
-Transaction"1..1" ..> "1..*"RéseauBlockchain 
-Transaction"1..1" ..> "1..*"PasserelleDePaiement 
+Transaction "1..1" ..> "1..*"RéseauBlockchain 
+Transaction "1..1" ..> "1..*"PasserelleDePaiement 
 
 Graphique"1" ..> "1"APITradingView 
 
