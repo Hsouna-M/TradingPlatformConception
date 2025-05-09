@@ -1,0 +1,58 @@
+@startuml RetraitFiat
+skinparam style strictuml
+
+participant Trader
+participant Portefeuille
+participant Transaction
+participant "Passerelle de Paiement" as PasserelleDePaiement
+
+activate Trader
+Trader ->> Portefeuille : DemandeRetraitFiat(montant, devise, detailsDestination)
+activate Portefeuille
+
+Portefeuille ->> Portefeuille : VerifierSoldeSuffisant(montant)
+activate Portefeuille
+
+alt SoldeSuffisant
+
+    Portefeuille ->> Transaction : <<creer>>(montant, devise, idTrader, detailsDestination)
+    activate Transaction
+    Transaction -->> Portefeuille : TransactionCreee(idTransaction)
+
+    Portefeuille ->> PasserelleDePaiement : TraiterRetrait(idTransaction, montant, devise, detailsDestination)
+    activate PasserelleDePaiement
+
+    PasserelleDePaiement ->> PasserelleDePaiement : EffectuerTraitementPasserelle
+    activate PasserelleDePaiement
+
+    alt TraitementPasserelleReussi
+        PasserelleDePaiement -->> Portefeuille : RetraitReussi(idReferencePasserelle)
+        deactivate PasserelleDePaiement
+
+        Portefeuille ->> Transaction : MarquerCommeTerminee(idReferencePasserelle)
+        Transaction -->> Portefeuille : StatutMisAJourTerminee
+        deactivate Transaction
+
+        Portefeuille ->> Portefeuille : DebiterSoldeFiat(montant)
+        Portefeuille -->> Trader : RetraitTraite(idTransaction, montant, idReferencePasserelle)
+
+    else TraitementPasserelleEchoue
+        PasserelleDePaiement -->> Portefeuille : RetraitEchoue(raison)
+        deactivate PasserelleDePaiement
+
+        Portefeuille ->> Transaction : MarquerCommeEchouee(raison)
+        Transaction -->> Portefeuille : StatutMisAJourEchouee
+        deactivate Transaction
+
+        Portefeuille -->> Trader : RetraitEchoue(idTransaction, raison)
+    end
+
+    deactivate Portefeuille
+
+else SoldeInsuffisant
+    Portefeuille -->> Trader : DemandeRetraitEchouee(Fonds Insuffisants)
+    deactivate Portefeuille
+end
+
+deactivate Trader
+@enduml

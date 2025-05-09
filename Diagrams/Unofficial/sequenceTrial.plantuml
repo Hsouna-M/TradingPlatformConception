@@ -1,0 +1,44 @@
+@startuml SequenceTrial_FR
+skinparam style strictuml
+
+participant Trader
+participant Portefeuille as Wallet
+participant Marché as Market
+
+activate Market
+activate Trader
+
+Trader ->> Market : ouvrir order achat BTC/USD
+activate Wallet
+Market ->> Wallet : Demande verification 
+Wallet->> Wallet : VérifierSolde() 
+activate Wallet
+
+alt Solde Suffisant
+
+    Wallet -->> Market : ok Verification
+    create order
+    Market ->> order : <<créer>>
+    activate order
+    Market -->> Trader : créé avec succès
+    deactivate Wallet
+    Market -\\ Market : enregistrerDansCarnet(order) 
+    loop
+        Market -\\ Market : chercher correspondance d'ordre
+        activate Market 
+    end
+    Market ->> order : exécuter l'ordre
+    deactivate order
+    Market ->> Wallet : ordre exécuté
+    activate Wallet
+    Wallet ->> Wallet : mettre à jour le solde
+    Wallet -->> Trader : solde mis à jour
+    deactivate Wallet
+
+
+else Solde Insuffisant
+    Wallet -->> Market : vérification échouée
+    Market -->> Trader : ordre echouée   
+end
+
+@enduml

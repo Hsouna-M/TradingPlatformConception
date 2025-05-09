@@ -1,0 +1,53 @@
+@startuml SequenceTrial_FR
+skinparam style strictuml
+
+participant Trader
+participant Portefeuille as Wallet
+participant Marché as Market
+participant "Carnet d'Ordres" as OrderBook
+participant "Ordre" as Order
+
+activate Market
+activate OrderBook
+activate Trader
+
+Trader ->> Wallet : creerOrdre(Marche, montant)
+activate Wallet
+
+Wallet ->> Wallet : verifierSolde(montant, devis)
+
+alt soldeSuffisant
+
+    Wallet ->> Order : creerOrdre(pair, montant, type)
+    activate Order
+    Order -->> Wallet : retourOrdreCree(orderId)
+    Wallet -->> Trader : notifierOrdreCree(orderId)
+    deactivate Wallet
+
+    Order ->> Market : demanderEnregistrement(orderId)
+    Market ->> OrderBook : enregistrerOrdre(order)
+    activate OrderBook
+
+    loop chercherOrdreCompatible
+        OrderBook ->> OrderBook : apparierOrdres(order)
+    end
+
+    OrderBook ->> Order : executerOrdre()
+    Order -->> OrderBook : ordreExecute()
+    deactivate Order
+
+    OrderBook ->> Wallet : notifierOrdreExecute()
+    deactivate OrderBook
+
+    activate Wallet
+    Wallet ->> Wallet : mettreAJourSolde()
+    Wallet -->> Trader : notifierSoldeMisAJour()
+    deactivate Wallet
+
+else soldeInsuffisant
+    Wallet -->> Trader : notifierFondsInsuffisants()
+    deactivate Wallet
+end
+
+deactivate Trader
+@enduml

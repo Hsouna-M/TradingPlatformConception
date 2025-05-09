@@ -1,0 +1,39 @@
+@startuml Déploiement Cloud Basique
+left to right direction
+
+package DiagrammeDeDeploiementDeTradingPlatform{
+
+component "Appareil Client PC/MOBILE" as User {
+    component "Navigateur Web"
+  }
+
+rectangle InfrastructurePlateforme{
+   component "Serveur Unix" as Web {
+    component "FrontendApp.js"
+  }
+  component "Serveur Unix" as AppSrv {
+     component "TradingPlatform.jar"
+  }
+  component "Serveur Unix" as DB{
+   component MySQL
+  }
+}
+
+rectangle ServicesExternes {
+
+    cloud "Interface Passerelle Paiement" as PaymentGateway <<External>>
+    cloud "Interface Blockchain" as Blockchain <<External>>
+    cloud "Service TradingView" as TradingView <<External>>
+
+}
+
+}
+
+User --> Web : HTTPS (internet)
+Web --> AppSrv : HTTPS (LAN)
+AppSrv --> DB : JDBC
+AppSrv -(0- PaymentGateway : HTTPS
+AppSrv -(0- Blockchain : HTTPS
+Web -(0-  TradingView : HTTPS
+
+@enduml

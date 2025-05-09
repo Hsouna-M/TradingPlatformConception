@@ -1,28 +1,31 @@
 @startuml tradingPlatform
 left to right direction
+skinparam actorStyle awesome
 
-
+actor "utilisateur" as user
 actor "Trader" as t
-actor "Admin" as a
+actor "Agent" as a
 actor "Réseau Blockchain" as blockchainNetwork
 actor "Passerelle de Paiement" as PaymentGateway
 actor "trading view api" as trading_api
 
-
+a <|-- user
+t <|-- user
 
 rectangle "Plateforme de Trading" {
 
-    package Transactions{
         usecase "Traiter Transaction Crypto" as miningTransaction
         usecase "Traiter Transaction Fiat" as fiatAuthConf
         usecase "Traiter Ordre" as processOrder
 
-    }
-    package Trading{
 
         usecase "Annuler Ordre" as CancelOrder
-        usecase "Rechercher Marché" as search
         usecase "Visualisation Graphique" as chart_visual
+        usecase "traiter visualistaion graphique" as traitgraph
+        chart_visual ..> traitgraph : <<include>> 
+         traitgraph <-- trading_api 
+        t --> chart_visual
+                 
 
         usecase "Choisir Time Frame" as time_frame
 
@@ -31,26 +34,30 @@ rectangle "Plateforme de Trading" {
         usecase "Exporter Historique des Trades" as export
 
         usecase "Demander Support Client" as clientSupport
+        usecase "passer ordre" as passorder
         usecase "Acheter Cryptomonnaie" as buy
         usecase "Vendre Cryptomonnaie" as sell
+        passorder <|-- buy
+        passorder <|-- sell 
 
         chart_visual <.. time_frame : <<extend>>
         hist_trade <.. export : <<extend>>
 
 
-}
 
 buy ..> processOrder : <<include>>
 sell ..> processOrder : <<include>>
 
-    package "Gestion des Fonds"{
-
+        usecase "gestion portfeuille" as gererPortfeuille
         usecase "Déposer" as deposit
         usecase "Dépôt Crypto" as depositCrypto
         usecase "Dépôt Fiat" as depositFiat
         usecase "Retirer" as withdraw
         usecase "Retrait Crypto" as withdrawCrypto
         usecase "Retrait Fiat" as withdrawFiat
+        gererPortfeuille <|-- deposit
+        gererPortfeuille <|-- withdraw 
+        gererPortfeuille <|-- hist_trade 
 
         usecase "Vérifier Historique Transactions" as transactionHistory
         usecase "Vérifier Solde Portefeuille" as balanceHistory
@@ -63,74 +70,66 @@ sell ..> processOrder : <<include>>
         transactionHistory <.. transactionHistory_export : <<extend>>
 
 
-     }
 
 withdrawCrypto ..> miningTransaction  : <<include>>
 depositCrypto ..> miningTransaction : <<include>>
 withdrawFiat ..> fiatAuthConf  : <<include>>
 depositFiat ..> fiatAuthConf  : <<include>>
 
-   package Notifications {
 
         usecase "Vérifier Historique Alertes" as notif_history
         usecase "Créer Alerte de Prix" as createAlert
+        usecase "gestion alertes" as gererAlerets
         usecase "Modifier Alerte" as modifyAlert
         usecase "Supprimer Alerte" as deleteAlert
+        gererAlerets <|-- modifyAlert
+        gererAlerets <|-- deleteAlert 
 
 
 
-    }
 
-    package "Gestion de Compte"{
-
-        usecase "Créer Compte" as register
         usecase "Connexion" as login
         usecase "Vérifier Détails Connexion" as verifyLogin
         usecase "Vérifier Identité Utilisateur" as verify_identity
 
         login ..> verifyLogin : <<include>>
+        usecase "s'incrire" as register
         register ..> verify_identity : <<include>>
 
-     }
-    package Administration{
 
         usecase "Gérer Utilisateurs" as manage_users
-        usecase "Gérer Marchés" as manage_markets
         usecase "Traiter Problèmes Support" as handleSupport
-     }
+
+        usecase "gestion ordres" as gestionOrdre
+        usecase "modifer ordres" as modifOrder
+        gestionOrdre <|-- passorder
+        gestionOrdre <|-- CancelOrder 
+        gestionOrdre <|-- modifOrder 
+        gererPortfeuille <|-- balanceHistory 
+
+}
 
 
-t --> sell
-t --> buy
-t --> chart_visual
-t --> search
-t --> CancelOrder
-t --> hist_trade
+
+t --> gestionOrdre 
 t --> clientSupport
 
-t --> withdraw
-t --> deposit
+t --> gererPortfeuille 
 t --> transactionHistory
-t --> balanceHistory
 
-t --> register
-t --> login
+user --> register
+user --> login
 
-t --> createAlert
-t --> modifyAlert
-t --> notif_history
-t --> deleteAlert
+gererAlerets <|-- createAlert
+gererAlerets  <|-- notif_history
+t --> gererAlerets 
 
 a --> manage_users
-a --> manage_markets
-a --> handleSupport
+manage_users <|-- handleSupport
+manage_users <|-- verify_identity 
 
-a --> verify_identity
-
-chart_visual --> trading_api
 
 fiatAuthConf <-- PaymentGateway
 miningTransaction <-- blockchainNetwork
-}
 
 @enduml
